@@ -3,10 +3,12 @@ import csv
 import sys
 from datetime import datetime
 
+api_key = "cc7d8adb7f3edc14567397edda3ddc97"
 mode = "dev"
+keyword = "car"
 
 
-def search_songs_by_keyword(api_key, keyword):
+def search_songs_by_keyword():
     base_url = "http://api.musixmatch.com/ws/1.1/"
     search_url = base_url + "track.search"
 
@@ -44,7 +46,7 @@ def search_songs_by_keyword(api_key, keyword):
     return all_tracks
 
 
-def get_album_release_date(api_key, album_id):
+def get_album_release_date(album_id):
     base_url = "http://api.musixmatch.com/ws/1.1/"
     track_info_url = base_url + "album.get"
 
@@ -60,8 +62,8 @@ def get_album_release_date(api_key, album_id):
     return album_release_date
 
 
-def main(api_key, keyword):
-    tracks = search_songs_by_keyword(api_key, keyword)
+def get_songs():
+    tracks = search_songs_by_keyword()
 
     if not tracks:
         print("No tracks found with the given keyword.")
@@ -74,7 +76,7 @@ def main(api_key, keyword):
             album_id = track["track"]["album_id"]
         except KeyError:
             continue
-        album_release_date = get_album_release_date(api_key, album_id)
+        album_release_date = get_album_release_date(album_id)
 
         if album_release_date:
             release_date = datetime.strptime(album_release_date, "%Y-%m-%d")
@@ -83,14 +85,17 @@ def main(api_key, keyword):
 
     if not filtered_tracks:
         print("No tracks found with the given keyword released before 1/1/2010.")
-        return
 
+    return filtered_tracks
+
+
+def create_csv(tracks):
     with open(f"{keyword}_songs.csv", "w", newline="", encoding="utf-8") as csvfile:
         fieldnames = ["song Name", "performer Name", "album Name", "song share URL"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
-        for track in filtered_tracks:
+        for track in tracks:
             track_info = track["track"]
             writer.writerow({
                 "song Name": track_info["track_name"],
@@ -101,13 +106,11 @@ def main(api_key, keyword):
 
 
 if __name__ == "__main__":
-    keyword = "car"
-
     if len(sys.argv) >= 2:
         keyword = sys.argv[1]
 
         if len(sys.argv) >= 3 and any(sys.argv[2] in x for x in ["dev", "prod"]):
             mode = sys.argv[2]
 
-    api_key = "cc7d8adb7f3edc14567397edda3ddc97"
-    main(api_key, keyword)
+    songs = get_songs()
+    create_csv(songs)
