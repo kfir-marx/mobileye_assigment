@@ -1,6 +1,5 @@
 FROM python:3.8-alpine
 
-ENV FLASK_APP main.py
 ENV FLASK_RUN_HOST 0.0.0.0
 
 # Set the working directory in the container
@@ -16,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000/tcp
 
 # Run app.py when the container launches
-CMD ["flask", "run"]
+CMD ["python", "/app/main.py"]
