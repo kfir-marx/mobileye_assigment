@@ -3,7 +3,7 @@ to run just the script: (assigment 1)
 python get_songs.py {keyword}
 
 
-to build and run dockerfile:
+to build and run dockerfile: (assigment 2)
 
 docker build -t app:1.0 .
 docker run -d -p 5000:5000 app:1.0 
