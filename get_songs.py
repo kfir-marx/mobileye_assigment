@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 
 api_key = "cc7d8adb7f3edc14567397edda3ddc97"
-mode = "dev"
+mode = "prod"
 keyword = "car"
 
 
